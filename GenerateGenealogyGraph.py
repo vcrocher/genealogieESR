@@ -5,7 +5,6 @@
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from anytree import Node, RenderTree
 import networkx as nx
 import mpu
 
@@ -22,36 +21,28 @@ theses_ids = theses[['auteurs.0.idref', "directeurs_these.0.idref", "directeurs_
 theses_ids = theses_ids.rename(columns = {'auteurs.0.idref':"Aut", "directeurs_these.0.idref" :"Dir0", "directeurs_these.1.idref" :"Dir1","directeurs_these.2.idref" :"Dir2","directeurs_these.3.idref" :"Dir3", "date_soutenance":"Date"})
 
 ##People entries
-tmp = theses.drop_duplicates(subset=["directeurs_these.0.idref"], ignore_index=True);
-dirs0 = tmp[["directeurs_these.0.idref","directeurs_these.0.nom","directeurs_these.0.prenom"]];
-dirs0 = dirs0.rename(columns={"directeurs_these.0.idref": "ID","directeurs_these.0.nom" : "Nom","directeurs_these.0.prenom": "Prenom"})
-tmp = theses.drop_duplicates(subset=["directeurs_these.1.idref"], ignore_index=True);
-dirs1 = tmp[["directeurs_these.1.idref","directeurs_these.1.nom","directeurs_these.1.prenom"]];
-dirs1 = dirs1.rename(columns={"directeurs_these.1.idref": "ID","directeurs_these.1.nom" : "Nom","directeurs_these.1.prenom": "Prenom"})
-tmp = theses.drop_duplicates(subset=["directeurs_these.2.idref"], ignore_index=True);
-dirs2 = tmp[["directeurs_these.2.idref","directeurs_these.2.nom","directeurs_these.2.prenom"]];
-dirs2 = dirs2.rename(columns={"directeurs_these.2.idref": "ID","directeurs_these.2.nom" : "Nom","directeurs_these.2.prenom": "Prenom"})
-tmp = theses.drop_duplicates(subset=["directeurs_these.3.idref"], ignore_index=True);
-dirs3 = tmp[["directeurs_these.3.idref","directeurs_these.3.nom","directeurs_these.3.prenom"]];
-dirs3 = dirs3.rename(columns={"directeurs_these.3.idref": "ID","directeurs_these.3.nom" : "Nom","directeurs_these.3.prenom": "Prenom"})
-dirs = pd.concat([dirs0, dirs1, dirs2, dirs3])
+dirs=pd.DataFrame(columns=['ID','Nom', 'Prenom']);
+for l in ['0', '1', '2', '3']:
+	tmp = theses.drop_duplicates(subset=['directeurs_these.'+l+'.idref'], ignore_index=True);
+	tmp = tmp[['directeurs_these.'+l+'.idref','directeurs_these.'+l+'.nom','directeurs_these.'+l+'.prenom']];
+	tmp = tmp.rename(columns={'directeurs_these.'+l+'.idref': "ID",'directeurs_these.'+l+'.nom': "Nom",'directeurs_these.'+l+'.prenom': "Prenom"})
+	dirs = pd.concat([dirs, tmp], ignore_index=True);
+	dirs.reset_index()
 dirs = dirs.drop_duplicates(ignore_index=True);
 
 tmp = theses.drop_duplicates(subset=["auteurs.0.idref"], ignore_index=True);
-auteurs = tmp[['auteurs.0.idref', "auteurs.0.nom","auteurs.0.prenom", "date_soutenance"]];
-auteurs = auteurs.rename(columns={'auteurs.0.idref': "ID", "auteurs.0.nom": "Nom","auteurs.0.prenom": "Prenom", "date_soutenance":"Date"})
+aut = tmp[['auteurs.0.idref', "auteurs.0.nom","auteurs.0.prenom", "date_soutenance"]];
+aut = aut.rename(columns={'auteurs.0.idref': "ID", "auteurs.0.nom": "Nom","auteurs.0.prenom": "Prenom", "date_soutenance":"Date"})
 
-people = pd.concat([auteurs, dirs0, dirs1, dirs2, dirs3])
+people = pd.concat([aut, dirs])
 people = people.drop_duplicates(subset=['ID'], ignore_index=True);
 
 
 ##Sanity checks
 #print(dirs.tail())
 #print(auteurs.tail())
-#print(people.head())
-display(theses_ids.tail())
-
-
+#print(theses_ids.tail())
+print(people.tail())
 
 
 ##Candidates - director association table

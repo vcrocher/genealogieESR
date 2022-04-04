@@ -1,5 +1,5 @@
 # Généalogie ESR
-Un test pour visualiser la genealogie des theses en France base sur la base de données de l'Abes.
+Un test pour visualiser la genealogie des theses en France à partir de la base de données de l'Abes.
 
 Le process est divisé en deux parties:
 

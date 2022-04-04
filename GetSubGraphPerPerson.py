@@ -3,7 +3,6 @@
 ## Vincent Crocher - 2022
 
 import pandas as pd
-from anytree import Node, RenderTree
 import networkx as nx
 import mpu
 import difflib
@@ -70,6 +69,8 @@ search_l=list(mapping.values())
 search_l = {i for i in search_l if type(i)==str}
 
 
+
+
 Key='nom prenom to search'
 
 
@@ -77,6 +78,7 @@ Key='nom prenom to search'
 start_node=find_closest(Key)
 get_subgraph(start_node, mapping)
 
+## Use drawing method:
 #draw_local(start_node, mapping)
 #draw_png(start_node, mapping)
 draw_svg(start_node, mapping)
