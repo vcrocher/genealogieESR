@@ -13,13 +13,22 @@ def get_this(indf, field, wherethisone, isthis):
 	tmp=indf[indf[wherethisone]==isthis];
 	return tmp.at[tmp.index[0], field];
 
-## Find closest name
+## Find closest name and associated id
 def find_closest(search):
-	options=difflib.get_close_matches(search, search_l, cutoff=0.4)
-	print(options)
+	options=difflib.get_close_matches(search, search_l, n=5, cutoff=0.4)
 	f=options[0]
 	pid=[k for k,v in mapping.items() if v == f]
 	return pid[0]
+
+## Find closest possible names and associated ids
+def find_closest_suggestions(search):
+	options=difflib.get_close_matches(search, search_l, n=5, cutoff=0.4)
+	pids=[]
+	for o in options:
+		pid=[k for k,v in mapping.items() if v == o]
+		pids.append(pid[0])
+	return pids, options
+
 
 ## Subgrah around given node
 def get_subgraph(start_node, mapping):
@@ -71,11 +80,14 @@ search_l = {i for i in search_l if type(i)==str}
 
 
 
-Key='nom prenom to search'
+Key='Nicolas Le bihan'
+
+start_nodes, sug=find_closest_suggestions(Key)
+print(sug)
 
 
 ## Select sub-graph
-start_node=find_closest(Key)
+start_node=start_nodes[0]
 get_subgraph(start_node, mapping)
 
 ## Use drawing method:
