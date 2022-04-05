@@ -7,7 +7,7 @@ Le process est divisé en deux parties:
 2. `GetSubGraphPerPerson.py`: fonctions basiques de recherche dans le graph et de sortie du graph d'une personne donnée. Utilises les fichiers pickle de 1.
 
 ## Limites
-- La base n'est pas forcément complète (elle est issue de theses.fr, voir lien plus bas)
+- La base n'est pas forcément complète (des entrées presentent dans theses.fr ne sont pas dans la base)
 - Souvent seul le directeur est renseigné (pas de co-encadrants)
 - Le code n'est pas optimisé (ni bien documenté)
 

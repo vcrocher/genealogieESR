@@ -80,19 +80,16 @@ search_l = {i for i in search_l if type(i)==str}
 
 
 
-Key='Nicolas Le bihan'
+Key='prenom nom'
 
 start_nodes, sug=find_closest_suggestions(Key)
 print(sug)
 
 
-## Select sub-graph
-start_node=start_nodes[0]
-get_subgraph(start_node, mapping)
 
 ## Use drawing method:
-#draw_local(start_node, mapping)
-#draw_png(start_node, mapping)
-draw_svg(start_node, mapping)
-#draw_dot(start_node, mapping)
+#draw_local(start_nodes[0], mapping)
+draw_png(start_nodes[0], mapping)
+draw_svg(start_nodes[0], mapping)
+#draw_dot(start_nodes[0], mapping)
 
