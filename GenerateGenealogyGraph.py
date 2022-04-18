@@ -57,7 +57,7 @@ for l in ['Dir0', 'Dir1', 'Dir2', 'Dir3']:
 assoc.drop(assoc[assoc['Dir']==assoc['Aut']].index, inplace=True)
 
 
-#String formatting for nicer dispaly
+#String formatting for nicer display
 people["DateStr"]=people["Date"].fillna(0)
 people=people.astype({'DateStr':'int'})
 people["DateStr"]=people["DateStr"].apply(str)

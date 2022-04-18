@@ -33,10 +33,17 @@ def find_closest_suggestions(search):
 ## Subgrah around given node
 def get_subgraph(start_node, mapping):
 	Gd=nx.bfs_tree(G, start_node) #Get nodes downwards only
+	nx.set_node_attributes(Gd, 'etud', name='class')
 	Gu=nx.bfs_tree(G, start_node, reverse=True) #Get nodes upwards only
-	G2 = nx.compose(Gd,Gu.reverse()) #Merge both
-	G2=nx.relabel_nodes(G2, mapping);
-	return G2
+	nx.set_node_attributes(Gu, 'dir', name='class')
+	G2=nx.compose(Gd,Gu.reverse()) #Merge both
+	for gu in Gu: #For each upward, get downwards nodes
+		G3=nx.bfs_tree(G, gu)
+		G3=nx.compose(G2,G3) #Merge
+	nx.set_node_attributes(G3, {start_node: 'auteur'}, name='class')
+	G3=nx.relabel_nodes(G3, mapping, copy=False)
+	G3=nx.relabel_nodes(G3, lambda nom: nom.replace('\n','\\n'), copy=False)
+	return G3
 
 
 ## Local quick display
@@ -80,16 +87,21 @@ search_l = {i for i in search_l if type(i)==str}
 
 
 
-Key='prenom nom'
+Key='Vincent Crocher'
 
-start_nodes, sug=find_closest_suggestions(Key)
-print(sug)
+#start_nodes, sug=find_closest_suggestions(Key)
+#print(sug)
 
 
+#quick test by node id
+start_nodes = ['16726785X']
+print(start_nodes)
 
 ## Use drawing method:
 #draw_local(start_nodes[0], mapping)
-draw_png(start_nodes[0], mapping)
 draw_svg(start_nodes[0], mapping)
+
+
+#draw_png(start_nodes[0], mapping)
 #draw_dot(start_nodes[0], mapping)
 
