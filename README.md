@@ -15,4 +15,5 @@ Le process est divisé en deux parties:
 - La base de données des theses sur le site [data.gouv.fr](https://www.data.gouv.fr/fr/datasets/theses-soutenues-en-france-depuis-1985/)
 - Python graph package [NetworkX](https://networkx.org/)
 - Python [pandas package](https://pandas.pydata.org/)
+- Python [rapidFuzz](https://github.com/maxbachmann/RapidFuzz/) package
 - Une genealogie des Maths (mondiale): [Mathematics Genealogy Project](https://genealogy.math.ndsu.nodak.edu/)
