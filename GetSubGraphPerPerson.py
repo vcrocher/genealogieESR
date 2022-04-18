@@ -5,7 +5,7 @@
 import pandas as pd
 import networkx as nx
 import mpu
-import difflib
+from rapidfuzz import fuzz, process
 
 
 ## Extract a given field from pd
@@ -22,12 +22,14 @@ def find_closest(search):
 
 ## Find closest possible names and associated ids
 def find_closest_suggestions(search):
-	options=difflib.get_close_matches(search, search_l, n=5, cutoff=0.4)
+	options=process.extract(search, search_l, limit=5)
 	pids=[]
+	suggs=[]
 	for o in options:
-		pid=[k for k,v in mapping.items() if v == o]
+		pid=[k for k,v in mapping.items() if v == o[0]]
 		pids.append(pid[0])
-	return pids, options
+		suggs.append(o[0])
+	return pids, suggs
 
 
 ## Subgrah around given node
@@ -89,15 +91,15 @@ search_l = {i for i in search_l if type(i)==str}
 
 Key='Vincent Crocher'
 
-#start_nodes, sug=find_closest_suggestions(Key)
-#print(sug)
+start_nodes, sug=find_closest_suggestions(Key)
+print(sug)
 
 
 #quick test by node id
-start_nodes = ['16726785X']
-print(start_nodes)
+#start_nodes = ['16726785X']
+#print(start_nodes)
 
-## Use drawing method:
+# Use drawing method:
 #draw_local(start_nodes[0], mapping)
 draw_svg(start_nodes[0], mapping)
 
