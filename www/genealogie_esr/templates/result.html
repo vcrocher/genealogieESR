@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block result %}
+	<p style='text-align:justify;' >Chaque nœud représente un.e docteur.e (avec son année de soutenance) et chaque flèche représente une supervision.
+L'arbre généré inclut les directeur.trices et doctorant.es de la personne ainsi que l'ensemble des doctorant.es encadrés par le(s) meme(s) directeur.ice(s). </p>
+	<div style="overflow: auto;">
+	{{ svg_blob|safe }}
+	</div>
+	<p><a href="download.svg?id={{ id }}">Télécharger (svg)</a></p>
+{% endblock %}

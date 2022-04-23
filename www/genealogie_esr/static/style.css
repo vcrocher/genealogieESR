@@ -1,0 +1,13 @@
+.svg_graph { overflow: auto; margin: auto;}
+
+.node.auteur text {fill: #377ba8; font-weight: bold;}
+.node.auteur ellipse { stroke: #377ba8; stroke-width:2; }
+
+.node.etud text {fill: black; border-top: 1px solid lightgray;}
+.node.etud ellipse {stroke: #377ba8; stroke-width:1;}
+
+.node.dir text {fill: #377ba8; border-top: 1px solid lightgray;}
+.node.dir ellipse {stroke: black; stroke-width:1;}
+
+.edge.etud path {stroke: #377ba8;}
+.edge.etud polygon {stroke: #377ba8; fill: #377ba8;}

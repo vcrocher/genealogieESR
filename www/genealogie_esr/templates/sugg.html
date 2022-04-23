@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block suggestions %}
+	<h4>Suggestions trouvées dans la base:</h4>
+	<form method="post">
+		<input type="hidden" name="type" value="select">
+		<fieldset>
+		{% for sugg, node in suggs %}
+			<label for="{{ node }}">
+				<input type="radio" name="Auteur" id="small" value="{{ node }}" required>
+				{{ sugg }}
+			</label>
+		{% endfor %}
+		</fieldset>
+		<!--<select name="Auteur" size="6" required>
+			<option value="" disabled>Sélectionner</option>
+			{% for sugg, node in suggs %}
+				<option value="{{ node }}">{{ sugg }}</option>
+			{% endfor %}
+		</select>-->
+		<input type="submit" value="Générer l'arbre" />
+	</form>
+{% endblock %}

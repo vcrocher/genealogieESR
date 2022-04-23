@@ -1,0 +1,51 @@
+<!doctype html>
+<title>Généalogie ESR</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+<main class="container">
+<header>
+	<h1>Généalogie ESR</h1>
+</header>
+<section class="header">
+	<h4>Générateur d'arbres "généalogiques" des thèses de doctorat soutenues en France à partir de la <a href='https://www.data.gouv.fr/fr/datasets/theses-soutenues-en-france-depuis-1985/'>base de données de l'Abes</a>.</h4>
+</section>
+
+<section class="search">
+	<script>
+		searching = function() {
+			document.getElementById("rechercher")['aria-busy']="true";
+			document.getElementById("rechercher")['value']="...";
+		}
+	</script>
+	<form id="search_form" method="post">
+		<input type="search" name="search_key" id="search_key" placeholder="Prénom Nom" title="Prénom Nom" minlength="5" required>
+		<input type="hidden" name="type" value="search">
+		<button id="rechercher" type="submit" onclick="searching()">Rechercher</button>
+	</form>
+	
+	{% block suggestions %}{% endblock %}
+</section>
+
+<section class="result">
+	{% block result %}{% endblock %}
+</section>
+
+<footer>
+	<div class="grid">
+		<div>
+		<h4>Limites:</h4>
+		<ul>
+			<li>La base ne semble pas complète (des entrées présentes dans theses.fr ne sont pas dans la base)</li>
+			<li>Souvent, seul le directeur est renseigné (pas de co-encadrants)</li>
+			<li>Certaines entrées ne sont pas consolidées: une meme personne peut apparaitre deux fois (avec deux ID différents): une fois en tant que directeur et une fois en tant que doctorant</li>
+		</ul>
+		</div>
+		<div>
+		<h4>Liens:</h4>
+		<ul>
+			<li>La base de données des thèses sur le site <a href="https://www.data.gouv.fr/fr/datasets/theses-soutenues-en-france-depuis-1985//">data.gouv.fr</a></li>
+			<li>Une généalogie des Maths (mondiale): <a href="https://genealogy.math.ndsu.nodak.edu/"> Mathematics Genealogy Project</a></li>
+		</ul>
+		</div>
+	</div>
+</footer>

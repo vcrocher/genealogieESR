@@ -79,17 +79,27 @@ def draw_dot(start_node, mapping):
 
 
 ## Load data
-G = nx.read_gpickle('ThesesAssocGraph.gpickle')
+import time
+start = time.process_time()
+G = nx.read_gpickle('ThesesAssocGraph.gpickle')  
+print(time.process_time() - start)
+start = time.process_time()
 mapping=mpu.io.read('ThesesMapping.pickle')
+print(time.process_time() - start)
+start = time.process_time()
 people=mpu.io.read('ThesesPeople.pickle')
+print(time.process_time() - start)
+start = time.process_time()
 #clean mapping list from NaNs
 search_l=list(mapping.values())
+print(time.process_time() - start)
+start = time.process_time()
+#search_l = {i.split('\n')[0] for i in search_l if type(i)==str} #TODO: but separate mapping and search_l
 search_l = {i for i in search_l if type(i)==str}
+print(time.process_time() - start)
 
 
-
-
-Key='Vincent Crocher'
+Key='Vincent francis'
 
 start_nodes, sug=find_closest_suggestions(Key)
 print(sug)
