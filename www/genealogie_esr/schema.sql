@@ -6,9 +6,11 @@ CREATE TABLE people (
   ID VARCHAR(20) PRIMARY KEY,
   Nom TINYTEXT,
   Prenom TINYTEXT,
-  Recherche MEDIUMTEXT,
+  Recherche TEXT,
   Date INTEGER,
-  DateStr VARCHAR(4) NOT NULL
+  DateStr VARCHAR(4) NOT NULL,
+  TitreThese TEXT NOT NULL,
+  TitreTheseEN TEXT NOT NULL
 );
 CREATE INDEX Recherche ON people (Recherche); 
 

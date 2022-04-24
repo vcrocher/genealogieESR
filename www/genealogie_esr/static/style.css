@@ -1,5 +1,7 @@
 .svg_graph { overflow: auto; margin: auto;}
 
+.node text {fill: black;}
+
 .node.auteur text {fill: #377ba8; font-weight: bold;}
 .node.auteur ellipse { stroke: #377ba8; stroke-width:2; }
 
