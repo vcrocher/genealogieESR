@@ -38,12 +38,16 @@ aut = aut.rename(columns={'auteurs.0.idref': "ID", "auteurs.0.nom": "Nom","auteu
 people = pd.concat([aut, dirs])
 people = people.drop_duplicates(subset=['ID'], ignore_index=True);
 
+#TODO curate IDs from .0 (ex: 253130174.0      Bourdarot     Frederic)
+
+#TODO: curate empty Nom, Prenom: why?
 
 ##Sanity checks
 #print(dirs.tail())
 #print(auteurs.tail())
 #print(theses_ids.tail())
 print(people.tail())
+
 
 
 ##Candidates - director association table
@@ -75,4 +79,6 @@ nx.write_gpickle(G, os.path.abspath(os.path.dirname(__file__)) + '/data/ThesesAs
 
 #Populate db with people
 def load_people_table(db):
-	people.to_sql('people', db, index=False, if_exists='replace')
+	people.to_sql('people', db, index=False, if_exists='append')
+	#db.execute('ALTER TABLE people ALTER COLUMN ID VARCHAR(20);')
+	#db.execute('ALTER TABLE people ADD PRIMARY KEY (ID);')

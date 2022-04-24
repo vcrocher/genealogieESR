@@ -11,3 +11,6 @@
 
 .edge.etud path {stroke: #377ba8;}
 .edge.etud polygon {stroke: #377ba8; fill: #377ba8;}
+
+.edge.dir path {stroke: #377ba8;}
+.edge.dir polygon {stroke: #377ba8; fill: #377ba8;}

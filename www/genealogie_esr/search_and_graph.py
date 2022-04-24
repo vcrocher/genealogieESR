@@ -8,7 +8,6 @@ import db
 
 
 G=[] #Main graph
-mapping_d={} #Dict use to map ID with display formatting of the nodes (nom prenom date)
 search_d={} #Dict of search
 data_loaded=False
 
@@ -25,9 +24,11 @@ def find_closest_suggestions(search):
 	dbb = db.get_db()
 	for o in options:
 		pids.append(o[2])
-		suggs.append(mapping_d[o[2]].replace('\\n', ' (')+')')
+		#suggs.append(mapping_d[o[2]].replace('\\n', ' (')+')')
+		suggs.append(get_display_from_id(dbb, o[2]).replace('\\n', ' (')+')')
 	return pids, suggs
 
+# Return formatted string for each person to dispay (on node or list)
 def get_display_from_id(dbb, id):
 	ret=dbb.execute('SELECT Prenom, Nom, DateStr FROM people WHERE ID = ?', (id,)).fetchone()
 	return ret['Prenom']+" "+ret['Nom']+'\\n'+ret['DateStr']
@@ -38,15 +39,16 @@ def get_subgraph(start_node):
 	nx.set_node_attributes(Gd, 'etud', name='class') #class are used for SVG style
 	nx.set_edge_attributes(Gd, 'etud', name='class') #class are used for SVG style
 	Gu=nx.bfs_tree(G, start_node, reverse=True) #Get nodes upwards only
-	nx.set_node_attributes(Gu, 'dir', name='class')
+	nx.set_node_attributes(Gu, 'dir', name='class') #class are used for SVG style
+	nx.set_edge_attributes(Gu, 'dir', name='class') #class are used for SVG style
 	G2=nx.compose(Gd,Gu.reverse()) #Merge both
-	for gu in Gu: #For each upward, get downwards nodes
+	for gu in Gu: #For each upward, get downwards nodes: sibblings
 		G3=nx.bfs_tree(G, gu)
 		G3=nx.compose(G2,G3) #Merge
 	nx.set_node_attributes(G3, {start_node: 'auteur'}, name='class') #class are used for SVG style
-	#dbb = db.get_db()
-	#G3=nx.relabel_nodes(G3, lambda id: get_display_from_id(dbb, id), copy=False) #With db: slow
-	G3=nx.relabel_nodes(G3, mapping_d, copy=False)
+	dbb = db.get_db()
+	G3=nx.relabel_nodes(G3, lambda id: get_display_from_id(dbb, id), copy=False) #With db
+	#G3=nx.relabel_nodes(G3, mapping_d, copy=False)
 	return G3
 
 ## Format for agraph
@@ -63,21 +65,20 @@ def draw_svg(start_node, name):
 
 ## Load data
 def load_data():
-	global G, data_loaded, search_d, mapping_d
+	global G, data_loaded, search_d
 	try: 
 		G = nx.read_gpickle(os.path.abspath(os.path.dirname(__file__)) + '/data/ThesesAssocGraph.gpickle')
 	except FileNotFoundError:
 		data_loaded=False
 		raise FileNotFoundError("Can't load the files")
-	# Create search list from db
-	dbb = db.get_db()
-	#search_l = [item['Recherche'] for item in dbb.execute('SELECT Recherche FROM people').fetchall()]
-	res=dbb.execute('SELECT ID,Prenom,Nom,DateStr,Recherche FROM people').fetchall()
-	#Mapping between ID and display name
-	mapping_d={};
-	search_d={};
-	for row in res:
-		if(type(row['Prenom'])==str and type(row['Nom'])==str and type(row['DateStr'])==str):
-			mapping_d[row['ID']]=row['Prenom']+" "+row['Nom']+'\\n'+row['DateStr']
-			search_d[row['ID']]=row['Recherche']
-	data_loaded=True
+	try: 
+		# Create search list from db
+		dbb = db.get_db()
+		res=dbb.execute('SELECT ID,Recherche FROM people').fetchall()
+		search_d={};
+		for row in res:
+			if(type(row['Recherche'])==str):
+				search_d[row['ID']]=row['Recherche']
+		data_loaded=True
+	except Exception as e:
+		data_loaded=False

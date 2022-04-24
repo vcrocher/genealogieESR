@@ -31,9 +31,6 @@ def create_app(test_config=None):
 	db.init_app(app)
 	
 	from . import search_and_graph as sg
-	
-	with app.app_context():
-		sg.load_data()
 
 	@app.route('/download.svg', methods=('GET', 'POST'))
 	def serve_svg():
@@ -91,6 +88,11 @@ def create_app(test_config=None):
 			else:
 				return render_template('index.html')
 		else:
-			return render_template('error.html')
+			with app.app_context():
+				sg.load_data()
+			if(sg.data_loaded):
+				return render_template('index.html')
+			else:
+				return render_template('error.html')
 
 	return app

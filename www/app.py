@@ -34,8 +34,6 @@ import db
 db.init_app(application)
 
 import search_and_graph as sg
-with application.app_context():
-	sg.load_data()
 
 @application.route('/download.svg', methods=('GET', 'POST'))
 def serve_svg():
@@ -52,9 +50,9 @@ def serve_svg():
 				file = blob['svgGraph'].decode("utf-8")
 				return Response(file, mimetype="image/svg")
 		else:
-			return render_template('error.html')
+			return render_template('error.html', mess="Erreur requete #1")
 	else:
-		return render_template('error.html')
+		return render_template('error.html', mess="Erreur requete #2")
 
 @application.route('/', methods=('GET', 'POST'))
 def index():
@@ -96,4 +94,9 @@ def index():
 		else:
 			return render_template('index.html')
 	else:
-		return render_template('error.html', mess="Données pas chargées")
+		with application.app_context():
+			sg.load_data()
+		if(sg.data_loaded):
+			return render_template('index.html')
+		else:
+			return render_template('error.html', mess="Données pas chargées")
