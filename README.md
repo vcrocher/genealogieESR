@@ -16,4 +16,5 @@ Le process est divisé en deux parties:
 - Python graph package [NetworkX](https://networkx.org/)
 - Python [pandas package](https://pandas.pydata.org/)
 - Python [rapidFuzz](https://github.com/maxbachmann/RapidFuzz/) package
+- Python [wordcloud](http://amueller.github.io/word_cloud/) package
 - Une genealogie des Maths (mondiale): [Mathematics Genealogy Project](https://genealogy.math.ndsu.nodak.edu/)

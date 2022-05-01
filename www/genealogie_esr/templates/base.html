@@ -1,7 +1,15 @@
 <!doctype html>
-<title>Généalogie ESR</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+
+<head>
+	<title>Généalogie ESR</title>
+	<meta charset="UTF-8">
+	<meta name="Description" content="Generateur d'arbres genealogiques de la recherche francaise." />
+	<meta name="keywords" content="genealogie, généalogie, recherche, thèse, PhD, docteur, doctorat, ESR, enseignement supérieur, arbre, directeur de thèse, étudiant, thèsard, thèsarde">
+	<meta http-equiv="content-language" content="fr-FR" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	<link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+</head>
+
 <main class="container">
 <header>
 	<h1>Généalogie ESR</h1>
@@ -27,6 +35,7 @@
 </section>
 
 <section class="result">
+	<a name='result'></a>
 	{% block result %}{% endblock %}
 </section>
 

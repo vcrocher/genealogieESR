@@ -10,6 +10,7 @@ from flask import (
 	Flask, Blueprint, flash, g, Response, redirect, render_template, request, session, url_for
 )
 
+
 #Needed for graphviz
 os.environ["PATH"] = os.pathsep.join([os.environ.get("HOME")+'/python/bin'] + os.environ.get("PATH", "").split(os.pathsep))
 
@@ -75,7 +76,7 @@ def index():
 				start_node = request.form['Auteur']
 				#get SVG blob
 				try:
-					svg_blob=sg.draw_svg(start_node, start_node)
+					svg_blob, cloud_svg=sg.draw_svg(start_node, start_node)
 					#store svg in db
 					dbb = db.get_db()
 					dbb.execute(
@@ -88,7 +89,7 @@ def index():
 					svg_blob = svg_blob.decode("utf-8")
 				except Exception as inst:
 					return render_template('error.html', str(inst))
-				return render_template('result.html', id=start_node, svg_blob=svg_blob)
+				return render_template('result.html', id=start_node, svg_blob=svg_blob, cloud_svg=cloud_svg)
 			else:
 				return render_template('index.html')
 		else:
@@ -99,4 +100,4 @@ def index():
 		if(sg.data_loaded):
 			return render_template('index.html')
 		else:
-			return render_template('error.html', mess="Données pas chargées")
+			return render_template('error.html', mess="Données non chargées")

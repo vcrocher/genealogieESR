@@ -7,6 +7,7 @@ import networkx as nx
 import mpu
 from rapidfuzz import fuzz, process
 
+from wordcloud import WordCloud
 
 ## Extract a given field from pd
 def get_this(indf, field, wherethisone, isthis):
@@ -31,6 +32,20 @@ def find_closest_suggestions(search):
 		suggs.append(o[0])
 	return pids, suggs
 
+def words_cloud(sub_g):
+	words=[]
+	exclude_l = ['-', 'à', 'le', 'la', 'les', 'des', 'un', 'une', 'de', 'du', 'par', 'pour', "d", "l", "et", "ou", "en", "sa", "son", "ses", "leur"
+				'contribution', 'contributions', 'étude', 'études']
+	text=""
+	for n in sub_g:
+		titre=people.loc[people['ID'] == n, 'TitreThese'].values[0]
+		titre=titre.replace("'", ' ')
+		titre=titre.lower()
+		text=text+' '+titre
+	wordcloud = WordCloud(stopwords = exclude_l,collocations=True,background_color="white").generate(text)
+	print(wordcloud.to_svg())
+	image = wordcloud.to_image()
+	image.show()
 
 ## Subgrah around given node
 def get_subgraph(start_node, mapping):
@@ -43,6 +58,7 @@ def get_subgraph(start_node, mapping):
 		G3=nx.bfs_tree(G, gu)
 		G3=nx.compose(G2,G3) #Merge
 	nx.set_node_attributes(G3, {start_node: 'auteur'}, name='class')
+	words_cloud(G3)
 	G3=nx.relabel_nodes(G3, mapping, copy=False)
 	G3=nx.relabel_nodes(G3, lambda nom: nom.replace('\n','\\n'), copy=False)
 	return G3
@@ -99,14 +115,14 @@ search_l = {i for i in search_l if type(i)==str}
 print(time.process_time() - start)
 
 
-Key='Vincent francis'
+Key='Vincent Crocher'
 
-start_nodes, sug=find_closest_suggestions(Key)
-print(sug)
+#start_nodes, sug=find_closest_suggestions(Key)
+#print(sug)
 
 
 #quick test by node id
-#start_nodes = ['16726785X']
+start_nodes = ['16726785X']
 #print(start_nodes)
 
 # Use drawing method:

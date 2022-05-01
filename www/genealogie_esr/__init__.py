@@ -71,7 +71,7 @@ def create_app(test_config=None):
 					#returned value is the node of the suggestion
 					start_node = request.form['Auteur']
 					#get SVG blob
-					svg_blob=sg.draw_svg(start_node, start_node)
+					svg_blob, cloud_svg=sg.draw_svg(start_node, start_node)
 					#store svg in db
 					dbb = db.get_db()
 					dbb.execute(
@@ -82,7 +82,7 @@ def create_app(test_config=None):
 					dbb.commit()
 					#serve it
 					svg_blob = svg_blob.decode("utf-8")
-					return render_template('result.html', id=start_node, svg_blob=svg_blob)
+					return render_template('result.html', id=start_node, svg_blob=svg_blob, cloud_svg=cloud_svg)
 				else:
 					return render_template('index.html')
 			else:

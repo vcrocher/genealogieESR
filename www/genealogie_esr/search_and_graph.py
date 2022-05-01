@@ -3,8 +3,10 @@ import networkx as nx
 import mpu
 from rapidfuzz import fuzz, process
 import os
+from wordcloud import WordCloud
 
 import db
+#from . import db
 
 
 G=[] #Main graph
@@ -42,8 +44,25 @@ def get_title_from_id(dbb, id):
 	else:
 		return ret['TitreThese']
 
+## To generate a word cloud from thesis titles
+def words_cloud(sub_g):
+	exclude_l = ['-', 'à', 'le', 'la', 'les', 'des', 'un', 'une', 'de', 'du', "d", "l", "et", "ou", "en", "sa", "son", "ses", "leur",
+				'sur', 'dans', 'au', 'aux', 'par', 'pour',
+				'contribution', 'contributions', 'étude', 'études', 'essais',
+				'in', 'of', 'the', 'a', 'an', 'and', 'or', 'for', 'on', 'about',
+				'essay', 'essays', 'study', 'studies'];
+	text=""
+	dbb = db.get_db()
+	for n in sub_g.nodes:
+		titre = get_title_from_id(dbb, n) #To optimise: using same request as for graph
+		titre=titre.replace("'", ' ')
+		titre=titre.lower()
+		text=text+' '+titre
+	wordcloud = WordCloud(stopwords = exclude_l,collocations=True,background_color="white",width=800,height=400).generate(text)
+	return wordcloud.to_svg()
+
 ## Subgrah around given node
-def get_subgraph(start_node):
+def get_subgraph(start_node, cloud):
 	Gd=nx.bfs_tree(G, start_node) #Get nodes downwards only
 	nx.set_node_attributes(Gd, 'etud', name='class') #class are used for SVG style
 	nx.set_edge_attributes(Gd, 'etud', name='class') #class are used for SVG style
@@ -54,13 +73,21 @@ def get_subgraph(start_node):
 	for gu in Gu: #For each upward, get downwards nodes: sibblings
 		G3=nx.bfs_tree(G, gu)
 		G3=nx.compose(G2,G3) #Merge
+	
+	#Generate words cloud if needed
+	if(cloud):
+		cloud_svg = words_cloud(G3);
+	else:
+		cloud_svg = "";
+	
+	#Nicely name and tag nodes
 	nx.set_node_attributes(G3, {start_node: 'auteur'}, name='class') #class are used for SVG style
 	dbb = db.get_db()
 	for node in G3.nodes:
 		nx.set_node_attributes(G3,{node: get_title_from_id(dbb, node)}, name='tooltip') #class are used for SVG style
 	G3=nx.relabel_nodes(G3, lambda id: get_display_from_id(dbb, id), copy=False) #With db
 	#G3=nx.relabel_nodes(G3, mapping_d, copy=False)
-	return G3
+	return G3, cloud_svg
 
 ## Format for agraph
 def agraph_format(g, start_node):
@@ -68,11 +95,11 @@ def agraph_format(g, start_node):
 	A.layout('dot', args='-Nfontsize=12 -Nwidth=".2" -Nheight="1." -Nmargin=0.1 -Gfontsize=8')
 	return A
 
-## To neat SVG
+## To neat SVG (and wordcloud)
 def draw_svg(start_node, name):
-	g=get_subgraph(start_node)
+	g, cloud_svg = get_subgraph(start_node, cloud=True)
 	A = agraph_format(g, start_node)
-	return A.draw(path=None, format='svg')
+	return A.draw(path=None, format='svg'), cloud_svg
 
 ## Load data
 def load_data():
