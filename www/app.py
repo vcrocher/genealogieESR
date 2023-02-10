@@ -1,3 +1,9 @@
+## Main flask app entry point serving website pages
+## 
+## Part of GenealogieESR 
+## 
+## Vincent Crocher - 2022
+
 this_file = "venv/bin/activate_this.py"
 exec(open(this_file).read(), {'__file__': this_file})
 

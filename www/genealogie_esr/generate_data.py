@@ -1,5 +1,5 @@
 ## Generate Graph and association files from data.gouv.fr datset: https://www.data.gouv.fr/fr/datasets/theses-soutenues-en-france-depuis-1985/
-## Uses theses-soutenues.csv as input and save three pickles files containing Graph and associations.
+## Uses theses-soutenues.csv as input and save a pickle file containing Graph and association and can populate a db.
 ## 
 ## Vincent Crocher - 2022
 
@@ -12,8 +12,8 @@ import unidecode
 #Load
 filename = os.path.abspath(os.path.dirname(__file__)) + '/data/theses-soutenues.csv';
 theses = pd.read_csv(filename, 
-			usecols=['auteurs.0.idref',"auteurs.0.nom","auteurs.0.prenom","directeurs_these.0.idref","directeurs_these.0.nom","directeurs_these.0.prenom","directeurs_these.1.idref","directeurs_these.1.nom","directeurs_these.1.prenom","directeurs_these.2.idref","directeurs_these.2.nom","directeurs_these.2.prenom","directeurs_these.3.idref","directeurs_these.3.nom","directeurs_these.3.prenom",'date_soutenance','titres.fr','titres.en'],
-			dtype=str);
+            usecols=['auteurs.0.idref',"auteurs.0.nom","auteurs.0.prenom","directeurs_these.0.idref","directeurs_these.0.nom","directeurs_these.0.prenom","directeurs_these.1.idref","directeurs_these.1.nom","directeurs_these.1.prenom","directeurs_these.2.idref","directeurs_these.2.nom","directeurs_these.2.prenom","directeurs_these.3.idref","directeurs_these.3.nom","directeurs_these.3.prenom",'date_soutenance','titres.fr','titres.en'],
+            dtype=str);
 
 #Keep only soutenance year
 theses["date_soutenance"]=pd.to_datetime(theses["date_soutenance"])
@@ -26,11 +26,11 @@ theses_ids = theses_ids.rename(columns = {'auteurs.0.idref':"Aut", "directeurs_t
 ##People entries
 dirs=pd.DataFrame(columns=['ID','Nom', 'Prenom', 'TitreThese', 'TitreTheseEN']);
 for l in ['0', '1', '2', '3']:
-	tmp = theses.drop_duplicates(subset=['directeurs_these.'+l+'.idref'], ignore_index=True);
-	tmp = tmp[['directeurs_these.'+l+'.idref','directeurs_these.'+l+'.nom','directeurs_these.'+l+'.prenom']];
-	tmp = tmp.rename(columns={'directeurs_these.'+l+'.idref': "ID",'directeurs_these.'+l+'.nom': "Nom",'directeurs_these.'+l+'.prenom': "Prenom"})
-	dirs = pd.concat([dirs, tmp], ignore_index=True);
-	dirs.reset_index()
+    tmp = theses.drop_duplicates(subset=['directeurs_these.'+l+'.idref'], ignore_index=True);
+    tmp = tmp[['directeurs_these.'+l+'.idref','directeurs_these.'+l+'.nom','directeurs_these.'+l+'.prenom']];
+    tmp = tmp.rename(columns={'directeurs_these.'+l+'.idref': "ID",'directeurs_these.'+l+'.nom': "Nom",'directeurs_these.'+l+'.prenom': "Prenom"})
+    dirs = pd.concat([dirs, tmp], ignore_index=True);
+    dirs.reset_index()
 dirs = dirs.drop_duplicates(ignore_index=True);
 dirs['TitreThese']='-';
 dirs['TitreTheseEN']='-';
@@ -52,11 +52,11 @@ print(people.tail())
 ##Candidates - director association table
 assoc=pd.DataFrame(columns=['Dir', 'Aut']);
 for l in ['Dir0', 'Dir1', 'Dir2', 'Dir3']:
-	tmp = theses_ids.rename(columns={l:'Dir'});
-	tmp = tmp.dropna(subset=['Dir', 'Aut']);
-	tmp = tmp[['Dir', 'Aut', 'Date']]
-	assoc = pd.concat([assoc, tmp], ignore_index=True);
-	assoc.reset_index()
+    tmp = theses_ids.rename(columns={l:'Dir'});
+    tmp = tmp.dropna(subset=['Dir', 'Aut']);
+    tmp = tmp[['Dir', 'Aut', 'Date']]
+    assoc = pd.concat([assoc, tmp], ignore_index=True);
+    assoc.reset_index()
 #Filter entry errors w/ candidate as director:
 assoc.drop(assoc[assoc['Dir']==assoc['Aut']].index, inplace=True)
 
@@ -82,4 +82,4 @@ nx.write_gpickle(G, os.path.abspath(os.path.dirname(__file__)) + '/data/ThesesAs
 
 #Populate db with people
 def load_people_table(db):
-	people.to_sql('people', db, index=False, if_exists='append')
+    people.to_sql('people', db, index=False, if_exists='append')
