@@ -3,25 +3,25 @@
 ## 
 ## Vincent Crocher - 2022
 
-import matplotlib.pyplot as plt
 import pandas as pd
 import networkx as nx
+import pickle
 import mpu
 import unidecode
 
 #Load
-filename = "theses-soutenues.csv";
+filename = "../theses-soutenues.csv";
 theses = pd.read_csv(filename, 
-            usecols=['auteurs.0.idref',"auteurs.0.nom","auteurs.0.prenom","directeurs_these.0.idref","directeurs_these.0.nom","directeurs_these.0.prenom","directeurs_these.1.idref","directeurs_these.1.nom","directeurs_these.1.prenom","directeurs_these.2.idref","directeurs_these.2.nom","directeurs_these.2.prenom","directeurs_these.3.idref","directeurs_these.3.nom","directeurs_these.3.prenom",'date_soutenance','titres.fr','titres.en'],
+            usecols=['auteur.idref',"auteur.nom","auteur.prenom","directeurs_these.0.idref","directeurs_these.0.nom","directeurs_these.0.prenom","directeurs_these.1.idref","directeurs_these.1.nom","directeurs_these.1.prenom","directeurs_these.2.idref","directeurs_these.2.nom","directeurs_these.2.prenom","directeurs_these.3.idref","directeurs_these.3.nom","directeurs_these.3.prenom",'date_soutenance','titres.fr','titres.en'],
             dtype=str);
 
 #Keep only soutenance year
-theses["date_soutenance"]=pd.to_datetime(theses["date_soutenance"])
+theses["date_soutenance"]=pd.to_datetime(theses["date_soutenance"], format='%Y-%m-%d', exact=False)
 theses["date_soutenance"]=theses["date_soutenance"].dt.year
 
 #Theses list per IDs
-theses_ids = theses[['auteurs.0.idref', "directeurs_these.0.idref", "directeurs_these.1.idref","directeurs_these.2.idref","directeurs_these.3.idref", 'date_soutenance']];
-theses_ids = theses_ids.rename(columns = {'auteurs.0.idref':"Aut", "directeurs_these.0.idref" :"Dir0", "directeurs_these.1.idref" :"Dir1","directeurs_these.2.idref" :"Dir2","directeurs_these.3.idref" :"Dir3", "date_soutenance":"Date"})
+theses_ids = theses[['auteur.idref', "directeurs_these.0.idref", "directeurs_these.1.idref","directeurs_these.2.idref","directeurs_these.3.idref", 'date_soutenance']];
+theses_ids = theses_ids.rename(columns = {'auteur.idref':"Aut", "directeurs_these.0.idref" :"Dir0", "directeurs_these.1.idref" :"Dir1","directeurs_these.2.idref" :"Dir2","directeurs_these.3.idref" :"Dir3", "date_soutenance":"Date"})
 
 ##People entries
 dirs=pd.DataFrame(columns=['ID','Nom', 'Prenom', 'TitreThese', 'TitreTheseEN']);
@@ -35,9 +35,9 @@ dirs = dirs.drop_duplicates(ignore_index=True);
 dirs['TitreThese']='-';
 dirs['TitreTheseEN']='-';
 
-tmp = theses.drop_duplicates(subset=["auteurs.0.idref"], ignore_index=True);
-aut = tmp[['auteurs.0.idref', "auteurs.0.nom", "auteurs.0.prenom", "date_soutenance", 'titres.fr', 'titres.en']];
-aut = aut.rename(columns={'auteurs.0.idref': "ID", "auteurs.0.nom": "Nom","auteurs.0.prenom": "Prenom", "date_soutenance":"Date", 'titres.fr': "TitreThese", 'titres.en': "TitreTheseEN"})
+tmp = theses.drop_duplicates(subset=["auteur.idref"], ignore_index=True);
+aut = tmp[['auteur.idref', "auteur.nom", "auteur.prenom", "date_soutenance", 'titres.fr', 'titres.en']];
+aut = aut.rename(columns={'auteur.idref': "ID", "auteur.nom": "Nom","auteur.prenom": "Prenom", "date_soutenance":"Date", 'titres.fr': "TitreThese", 'titres.en': "TitreTheseEN"})
 
 people = pd.concat([aut, dirs])
 people = people.drop_duplicates(subset=['ID'], ignore_index=True);
@@ -79,6 +79,7 @@ G = nx.from_pandas_edgelist(assoc, 'Dir', 'Aut', create_using=nx.DiGraph)
 mapping = dict(zip(people["ID"], people["Prenom"]+' '+people["Nom"]+'\n('+people["DateStr"]+')'));
 
 #Save it
-nx.write_gpickle(G, 'ThesesAssocGraph.gpickle')
+with open('ThesesAssocGraph.gpickle', 'wb') as f:
+    pickle.dump(G, f, pickle.HIGHEST_PROTOCOL)
 mpu.io.write('ThesesMapping.pickle', mapping)
 mpu.io.write('ThesesPeople.pickle', people)

@@ -4,6 +4,7 @@
 
 import pandas as pd
 import networkx as nx
+import pickle
 import mpu
 from rapidfuzz import fuzz, process
 
@@ -97,7 +98,9 @@ def draw_dot(start_node, mapping):
 ## Load data
 import time
 start = time.process_time()
-G = nx.read_gpickle('ThesesAssocGraph.gpickle')  
+with open('ThesesAssocGraph.gpickle', 'rb') as f:
+    G = pickle.load(f)
+
 print(time.process_time() - start)
 start = time.process_time()
 mapping=mpu.io.read('ThesesMapping.pickle')
@@ -119,14 +122,14 @@ print(time.process_time() - start)
 ## Testing
 
 
-Key='Vincent Crocher'
+Key='Pierre Bourdieu'
 
-#start_nodes, sug=find_closest_suggestions(Key)
-#print(sug)
+start_nodes, sug=find_closest_suggestions(Key)
+print(sug)
 
 
 #quick test by node id
-start_nodes = ['16726785X']
+#start_nodes = ['16726785X']
 #print(start_nodes)
 
 # Use drawing method:
