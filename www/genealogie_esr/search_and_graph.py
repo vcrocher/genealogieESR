@@ -1,4 +1,4 @@
-## Set of fucntions to manipulate, search in, graph and generate point clouds from the theses database  
+## Set of functions to manipulate, search in, graph and generate point clouds from the theses database  
 ## 
 ## Part of GenealogieESR 
 ## 
@@ -11,8 +11,8 @@ from rapidfuzz import fuzz, process
 import os
 from wordcloud import WordCloud
 
-#import db #For online use
-from . import db  #For local use only
+import db #For online use
+#from . import db  #For local use only
 
 
 G=[] #Main graph
@@ -38,17 +38,18 @@ def find_closest_suggestions(search):
 
 ## Return formatted string for each person to dispay (on node or list)
 def get_display_from_id(dbb, id):
-    ret=dbb.execute('SELECT Prenom, Nom, DateStr FROM people WHERE ID = ?', (id,)).fetchone()
+    ret=dbb.execute("SELECT Prenom, Nom, DateStr FROM people WHERE ID = ?", (id,)).fetchone()
     return ret['Prenom']+" "+ret['Nom']+'\\n'+ret['DateStr']
 
 ## Return theses title from id
 def get_title_from_id(dbb, id):
-    ret=dbb.execute('SELECT TitreThese FROM people WHERE ID = ?', (id,)).fetchone()
+    ret=dbb.execute("SELECT TitreThese FROM people WHERE ID = ?", (id,)).fetchone()
     if(ret['TitreThese']=='-'):
-        ret=dbb.execute('SELECT TitreTheseEN FROM people WHERE ID = ?', (id,)).fetchone()
+        ret=dbb.execute("SELECT TitreTheseEN FROM people WHERE ID = ?", (id,)).fetchone()
         return ret['TitreTheseEN']
     else:
         return ret['TitreThese']
+
 
 ## To generate a word cloud from thesis titles
 def words_cloud(sub_g):
@@ -92,7 +93,6 @@ def get_subgraph(start_node, cloud):
     for node in G3.nodes:
         nx.set_node_attributes(G3,{node: get_title_from_id(dbb, node)}, name='tooltip') #class are used for SVG style
     G3=nx.relabel_nodes(G3, lambda id: get_display_from_id(dbb, id), copy=False) #With db
-    #G3=nx.relabel_nodes(G3, mapping_d, copy=False)
     return G3, cloud_svg
 
 ## Format for agraph

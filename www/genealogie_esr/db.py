@@ -1,4 +1,4 @@
-## Flask db managment fucnctions
+## Flask db management functions
 ## 
 ## Part of GenealogieESR 
 ## 
@@ -6,6 +6,8 @@
 
 import sqlite3
 
+import os
+import pickle
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
@@ -44,14 +46,15 @@ def init_db_command():
     click.echo('Initialized the database.')
 
 
-## Re-populate db from master file
+## Re-populate db from master csv file
 def load_db():
     db = get_db()
     
-    #load master file and create graph pickle
-    from . import generate_data as gd
-    #re-load people table
-    gd.load_people_table(db)
+    #Load from pickle file 
+    with open(os.path.abspath(os.path.dirname(__file__)) + '/data/ThesesPeople.pickle', 'rb') as f:
+        people = pickle.load(f)
+    #Push to sql db
+    people.to_sql('people', db, index=False, if_exists='append')
 
 
 @click.command('load-db')

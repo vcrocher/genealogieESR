@@ -77,17 +77,20 @@ def create_app(test_config=None):
                     #returned value is the node of the suggestion
                     start_node = request.form['Auteur']
                     #get SVG blob
-                    svg_blob, cloud_svg=sg.draw_svg(start_node, start_node)
-                    #store svg in db
-                    dbb = db.get_db()
-                    dbb.execute(
-                        'REPLACE INTO svg (ID, svgGraph)'
-                        ' VALUES (?, ?)',
-                        (start_node, svg_blob)
-                    )
-                    dbb.commit()
-                    #serve it
-                    svg_blob = svg_blob.decode("utf-8")
+                    try:
+                        svg_blob, cloud_svg=sg.draw_svg(start_node, start_node)
+                        #store svg in db
+                        dbb = db.get_db()
+                        dbb.execute(
+                            'REPLACE INTO svg (ID, svgGraph)'
+                            ' VALUES (?, ?)',
+                            (start_node, svg_blob)
+                        )
+                        dbb.commit()
+                        #serve it
+                        svg_blob = svg_blob.decode("utf-8")
+                    except Exception as inst:
+                        return render_template('error.html', str(inst))
                     return render_template('result.html', id=start_node, svg_blob=svg_blob, cloud_svg=cloud_svg)
                 else:
                     return render_template('index.html')
@@ -99,6 +102,6 @@ def create_app(test_config=None):
             if(sg.data_loaded):
                 return render_template('index.html')
             else:
-                return render_template('error.html')
+                return render_template('error.html', mess="Données non chargées")
 
     return app

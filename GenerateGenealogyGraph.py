@@ -1,7 +1,7 @@
 ## Generate Graph and association files from data.gouv.fr datset: https://www.data.gouv.fr/fr/datasets/theses-soutenues-en-france-depuis-1985/
 ## Uses theses-soutenues.csv as input and save a pickle file containing Graph and associations and can populate a db
 ## 
-## Vincent Crocher - 2022
+## Vincent Crocher - 2022 - 2024
 
 import pandas as pd
 import networkx as nx
